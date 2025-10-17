@@ -1,0 +1,3 @@
+.docker/app/data
+.docker/db/data
+.env
