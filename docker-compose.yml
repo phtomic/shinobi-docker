@@ -1,0 +1,36 @@
+version: "3.6"
+
+services:
+  db:
+    image: mysql:8.0.43
+    container_name: shinobi-db
+    volumes:
+      - .docker/db/data:/var/lib/mysql
+      - .docker/db/mysql-init:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+    ports:
+      - 3306:3306
+    networks:
+      - shinobi
+    env_file:
+      - .env
+
+  app:
+    build:
+      context: .docker/shinobi/init
+      args:
+        SHINOBI_BRANCH: dev
+    container_name: shinobi-app
+    volumes:
+      - /dev/shm/ShinobiRAM:/dev/shm/streams
+      - .docker/shinobi/data:/home/Shinobi
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    networks:
+      - shinobi
+    env_file:
+      - .env
+
+networks:
+  shinobi:
