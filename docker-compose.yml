@@ -6,10 +6,10 @@ services:
     container_name: shinobi-db
     volumes:
       - .docker/db/data:/var/lib/mysql
-      - .docker/db/mysql-init:/docker-entrypoint-initdb.d
+      - .docker/db/init:/docker-entrypoint-initdb.d
     restart: unless-stopped
     ports:
-      - 3306:3306
+      - "${DB_PORT}:3306"
     networks:
       - shinobi
     env_file:
@@ -17,15 +17,15 @@ services:
 
   app:
     build:
-      context: .docker/shinobi/init
+      context: .docker/app/init
       args:
         SHINOBI_BRANCH: dev
     container_name: shinobi-app
     volumes:
       - /dev/shm/ShinobiRAM:/dev/shm/streams
-      - .docker/shinobi/data:/home/Shinobi
+      - .docker/app/data:/home/Shinobi
     ports:
-      - "8080:8080"
+      - "${APP_PORT}:8080"
     restart: unless-stopped
     networks:
       - shinobi
